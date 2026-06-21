@@ -1,15 +1,4 @@
-This confirms the diagnosis exactly. Look at what's missing throughout this document:
 
-- `## Project Overview` became just `Project Overview` (no `#` symbols anywhere)
-- Code fences lost their triple-backtick markers — you can see `bashcd Library_Management_System` and `jsonPOST/auth/register...` mashed together, where it should be ` ```bash ` on its own line
-- Tables lost their `|` pipe separators — `MethodEndpointDescriptionAuth required` should be a proper Markdown table row
-- The bullet list lost its `-` markers and collapsed into one paragraph
-
-This is exactly what happens when Markdown is copied from a **rendered preview** rather than the raw source — all the syntax characters (`#`, `` ` ``, `-`, `|`) get stripped because the preview only shows formatted text, not the underlying markup. So this isn't a GitHub rendering bug; the actual file content on your machine no longer contains valid Markdown syntax.
-
-The fix is to fully replace the content with proper raw Markdown. Don't try to patch the existing text — delete it all and paste fresh. Here it is as a plain code block so copying it preserves every `#`, backtick, and `-` correctly:
-
-```markdown
 # Library Management System
 
 A full-stack library/bookstore management application with a secure RESTful API backend (Node.js, Express, MongoDB) and a React frontend. Built as part of a Backend Development Internship project, extended with JWT authentication and a complete client UI.
