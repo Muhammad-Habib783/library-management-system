@@ -1,163 +1,183 @@
-# Library Management System - RESTful API
+Library Management System
 
-A complete bookstore management REST API built with Node.js, Express.js, and MongoDB. This project implements CRUD operations for books with user authentication.
+A full-stack library/bookstore management application with a secure RESTful API backend (Node.js, Express, MongoDB) and a React frontend. Built as part of a Backend Development Internship project, extended with JWT authentication and a complete client UI.
 
-## 📋 Project Overview
+Project Overview
 
-This is a backend API for a library management system that allows users to:
-- Register and authenticate
-- Create, read, update, and delete books
-- Manage book inventory with details like title, author, price, ISBN, and publication date
-- Secure endpoints with JWT authentication
+This project lets users browse a catalog of books and lets authenticated users manage that catalog (add, update, delete). It started from a "Bookstore CRUD API" brief and grew into a small library system with:
 
-## 🛠️ Technologies Used
 
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB with Mongoose ODM
-- **Authentication:** JWT (jsonwebtoken)
-- **Password Hashing:** bcryptjs
-- **Environment:** dotenv
-- **CORS:** Enabled for cross-origin requests
-- **Dev Tools:** Nodemon for hot-reloading
+A REST API for full CRUD on books (title, author, price, ISBN, published date, plus category, description, cover image, and availability)
+User authentication (register/login) using JWT, with password hashing via bcrypt
+Protected routes — creating, updating, and deleting books requires a valid token; browsing books is public
+A React frontend with a landing page, login/register screens, and a dashboard for managing the catalog
+A seed script to populate the database with sample books
 
-## 📦 Installation & Setup
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or MongoDB Atlas)
-- npm or yarn
+Technologies Used
 
-### Steps to Run Locally
+Backend
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-github-repo-url>
-   cd Library_Management_System
-   ```
 
-2. **Install backend dependencies**
-   ```bash
-   cd backend
-   npm install
-   ```
+Node.js + Express 5
+MongoDB + Mongoose (ODM)
+JSON Web Tokens (jsonwebtoken) for authentication
+bcryptjs for password hashing
+dotenv for environment configuration
+cors for cross-origin requests
+nodemon for development hot-reload
 
-3. **Configure environment variables**
-   Create a `.env` file in the `backend/` directory:
-   ```
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/library_management
-   JWT_SECRET=librarySecretKey123
-   ```
 
-4. **Start MongoDB**
-   - Local: `mongod`
-   - Or use MongoDB Atlas connection string
+Frontend
 
-5. **Run the server**
-   ```bash
-   npm run dev    # Development with nodemon
-   npm start      # Production
-   ```
 
-   Server will run on: `http://localhost:5000`
+React (Create React App)
+React Context API for auth state
+Font Awesome icons
 
-## 📚 API Endpoints
 
-### Base URL: `http://localhost:5000/api`
+Project Structure
 
-### Authentication Endpoints
+Library_Management_System/
+├── backend/
+│   ├── app.js                  # Express app entry point
+│   ├── package.json
+│   ├── .env                    # Environment variables (not committed)
+│   ├── controllers/
+│   │   ├── authController.js   # register / login logic
+│   │   └── bookController.js   # book CRUD logic
+│   ├── models/
+│   │   ├── User.js             # User schema
+│   │   └── Book.js             # Book schema
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── bookRoutes.js
+│   ├── middleware/
+│   │   └── authMiddleware.js   # JWT verification ("protect")
+│   ├── seed.js                 # Seeds the database
+│   └── seedData.js             # Sample book records
+├── frontend/
+│   ├── src/
+│   │   ├── pages/               # Landing, Login, Register, Dashboard
+│   │   ├── context/AuthContext.js
+│   │   └── App.js
+│   └── package.json
+└── README.md
 
-#### Register User
-```
-POST /auth/register
-Content-Type: application/json
+Prerequisites
 
-Body:
-{
-  "email": "user@example.com",
-  "password": "securepassword",
-  "username": "username"
-}
 
-Response:
-{
-  "_id": "user_id",
-  "email": "user@example.com",
-  "username": "username"
-}
-```
+Node.js v16 or higher
+MongoDB — local install or a free MongoDB Atlas cluster
+npm (comes with Node.js)
 
-#### Login User
-```
-POST /auth/login
-Content-Type: application/json
 
-Body:
-{
-  "email": "user@example.com",
+How to Run Locally
+
+1. Get the code
+
+Download or clone this repository, then move into the project folder:
+
+bashcd Library_Management_System
+
+2. Backend setup
+
+bashcd backend
+npm install
+
+Create a .env file inside backend/:
+
+envPORT=5000
+MONGO_URI=mongodb://localhost:27017/library_management
+JWT_SECRET=your_secret_key_here
+
+
+If using MongoDB Atlas, replace MONGO_URI with your Atlas connection string instead of the local one.
+
+
+
+Start MongoDB locally if you're not using Atlas:
+
+bashmongod
+
+(Optional) Seed the database with sample books:
+
+bashnpm run seed
+
+Run the backend server:
+
+bashnpm run dev     # development, with auto-restart via nodemon
+# or
+npm start       # production
+
+The API will be available at http://localhost:5000.
+
+3. Frontend setup
+
+In a separate terminal:
+
+bashcd frontend
+npm install
+npm start
+
+The React app will open at http://localhost:3000 and communicate with the API at http://localhost:5000.
+
+API Endpoints
+
+Base URL: http://localhost:5000/api
+
+Authentication
+
+MethodEndpointDescriptionAuth requiredPOST/auth/registerCreate a new user accountNoPOST/auth/loginLog in and receive a JWTNo
+
+Register — request body
+
+json{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
   "password": "securepassword"
 }
 
-Response:
-{
-  "token": "jwt_token_here",
-  "user": { ... }
+Register — response (201 Created)
+
+json{
+  "_id": "665fa1b2c3d4e5f678901234",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "token": "eyJhbGciOiJIUzI1NiIs..."
 }
-```
 
----
+Login — request body
 
-### Book Endpoints
+You can log in with either your email or your name in the email field:
 
-#### Get All Books
-```
-GET /books
-
-Response:
-[
-  {
-    "_id": "book_id",
-    "title": "The Alchemist",
-    "author": "Paulo Coelho",
-    "price": 15,
-    "isbn": "1234567890",
-    "publishedDate": "1988-04-15",
-    "category": "Fiction",
-    "description": "A philosophical novel",
-    "available": true,
-    "createdAt": "2026-06-21T10:00:00Z"
-  }
-]
-```
-
-#### Get Single Book by ID
-```
-GET /books/:id
-
-Example: GET /books/507f1f77bcf86cd799439011
-
-Response:
-{
-  "_id": "507f1f77bcf86cd799439011",
-  "title": "Atomic Habits",
-  "author": "James Clear",
-  "price": 20,
-  "isbn": "9780735211292",
-  "publishedDate": "2018-10-16",
-  "category": "Self-Help",
-  "description": "Build better habits",
-  "available": true
+json{
+  "email": "jane@example.com",
+  "password": "securepassword"
 }
-```
 
-#### Create a New Book ⭐ (Protected)
-```
-POST /books
-Authorization: Bearer <jwt_token>
-Content-Type: application/json
+Login — response (200 OK)
 
-Body:
-{
+json{
+  "_id": "665fa1b2c3d4e5f678901234",
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
+
+For protected routes, send the token in the Authorization header:
+
+Authorization: Bearer <token>
+
+Books
+
+MethodEndpointDescriptionAuth requiredGET/booksGet all booksNoGET/books/:idGet a single book by IDNoPOST/booksAdd a new bookYesPUT/books/:idUpdate a book's detailsYesDELETE/books/:idDelete a bookYes
+
+Create a book — POST /books
+
+Request body:
+
+json{
   "title": "Atomic Habits",
   "author": "James Clear",
   "price": 20,
@@ -165,206 +185,137 @@ Body:
   "publishedDate": "2018-10-16",
   "category": "Self-Help",
   "description": "An Easy and Proven Way to Build Good Habits",
-  "coverImage": "https://example.com/image.jpg",
+  "coverImage": "https://example.com/cover.jpg",
   "available": true
 }
 
-Response: (201 Created)
-{
-  "_id": "new_book_id",
+Response (201 Created):
+
+json{
+  "_id": "665fa1b2c3d4e5f678901299",
   "title": "Atomic Habits",
   "author": "James Clear",
-  ...
+  "price": 20,
+  "isbn": "9780735211292",
+  "publishedDate": "2018-10-16T00:00:00.000Z",
+  "category": "Self-Help",
+  "description": "An Easy and Proven Way to Build Good Habits",
+  "coverImage": "https://example.com/cover.jpg",
+  "available": true,
+  "createdAt": "2026-06-21T10:00:00.000Z",
+  "updatedAt": "2026-06-21T10:00:00.000Z"
 }
-```
 
-#### Update a Book ⭐ (Protected)
-```
-PUT /books/:id
-Authorization: Bearer <jwt_token>
-Content-Type: application/json
+Get all books — GET /books
 
-Example: PUT /books/507f1f77bcf86cd799439011
+Response (200 OK):
 
-Body:
-{
+json[
+  {
+    "_id": "665fa1b2c3d4e5f678901299",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "price": 20,
+    "isbn": "9780735211292",
+    "publishedDate": "2018-10-16T00:00:00.000Z",
+    "category": "Self-Help",
+    "available": true
+  }
+]
+
+Get a single book — GET /books/:id
+
+Example: GET /books/665fa1b2c3d4e5f678901299
+
+Response (200 OK): same shape as a single book object above.
+Response (404 Not Found) if the ID doesn't exist:
+
+json{ "message": "Book not found" }
+
+Update a book — PUT /books/:id
+
+Request body (send only the fields you want to change):
+
+json{
   "price": 18,
   "available": false
 }
 
-Response: (200 OK)
-{
-  "_id": "507f1f77bcf86cd799439011",
-  "title": "Atomic Habits",
-  ...
-  "price": 18,
-  "available": false
+Response (200 OK): the full updated book object.
+
+Delete a book — DELETE /books/:id
+
+Response (200 OK):
+
+json{ "message": "Book deleted successfully" }
+
+Book Schema
+
+javascript{
+  title: String,          // required
+  author: String,         // required
+  price: Number,          // required
+  isbn: String,            // required, unique
+  publishedDate: Date,     // required
+  category: String,        // default: "General"
+  description: String,     // default: ""
+  coverImage: String,      // default: ""
+  available: Boolean,      // default: true
+  createdAt: Date,         // auto-generated
+  updatedAt: Date          // auto-generated
 }
-```
 
-#### Delete a Book ⭐ (Protected)
-```
-DELETE /books/:id
-Authorization: Bearer <jwt_token>
+User Schema
 
-Example: DELETE /books/507f1f77bcf86cd799439011
-
-Response: (200 OK)
-{
-  "message": "Book deleted successfully"
+javascript{
+  name: String,      // required
+  email: String,     // required, unique
+  password: String,  // required, stored as a bcrypt hash
+  role: String,       // default: "user"
+  createdAt: Date,
+  updatedAt: Date
 }
-```
 
-⭐ **Protected endpoints** require JWT token in Authorization header:
-```
-Authorization: Bearer <your_jwt_token>
-```
+Testing with Postman
 
----
+A suggested test sequence:
 
-## 📋 Book Schema
 
-```javascript
-{
-  title: String (required),
-  author: String (required),
-  price: Number (required),
-  isbn: String (required, unique),
-  publishedDate: Date (required),
-  category: String (default: "General"),
-  description: String (default: ""),
-  coverImage: String (default: ""),
-  available: Boolean (default: true),
-  createdAt: Date (auto-generated),
-  updatedAt: Date (auto-generated)
-}
-```
+POST /api/auth/register — create a user
+POST /api/auth/login — log in and copy the token from the response
+GET /api/books — confirm you can read books without a token
+POST /api/books — add a book, with Authorization: Bearer <token> set
+GET /api/books/:id — fetch the book you just created
+PUT /api/books/:id — update it (with the token)
+DELETE /api/books/:id — remove it (with the token)
 
----
 
-## 🧪 Testing with Postman
+See POSTMAN_COLLECTION.md in this repo for an importable Postman collection.
 
-1. **Import the API**
-   - Create a new collection in Postman
-   - Add the endpoints from the list above
+Sample cURL Commands
 
-2. **Test Authentication**
-   - Register a new user at `POST /auth/register`
-   - Login at `POST /auth/login` to get JWT token
-   - Copy the token from response
-
-3. **Test Book Endpoints**
-   - Add token to Authorization header (Bearer scheme) for protected endpoints
-   - Use JSON body for POST/PUT requests
-
-4. **Sample test sequence:**
-   ```
-   1. POST /auth/register → Get user created
-   2. POST /auth/login → Get JWT token
-   3. GET /books → See all books
-   4. POST /books → Create new book (use token)
-   5. GET /books/:id → Get specific book
-   6. PUT /books/:id → Update book (use token)
-   7. DELETE /books/:id → Delete book (use token)
-   ```
-
----
-
-## 🚀 Project Structure
-
-```
-Library_Management_System/
-├── backend/
-│   ├── app.js                 # Main Express app
-│   ├── package.json           # Dependencies
-│   ├── .env                   # Environment variables
-│   ├── config/                # Configuration files
-│   ├── controllers/           # Business logic
-│   │   ├── authController.js
-│   │   └── bookController.js
-│   ├── models/                # Mongoose schemas
-│   │   ├── User.js
-│   │   └── Book.js
-│   ├── routes/                # API routes
-│   │   ├── authRoutes.js
-│   │   └── bookRoutes.js
-│   ├── middleware/            # Custom middleware
-│   │   └── authMiddleware.js
-│   ├── seed.js                # Database seeding
-│   └── seedData.js            # Sample data
-├── frontend/                  # React frontend (optional)
-└── README.md                  # This file
-```
-
----
-
-## 🔒 Security Features
-
-- ✅ JWT-based authentication
-- ✅ Password hashing with bcryptjs
-- ✅ Protected write endpoints (POST, PUT, DELETE)
-- ✅ CORS configuration
-- ✅ Error handling and validation
-- ✅ Unique ISBN constraint
-
----
-
-## 📝 Sample cURL Commands
-
-```bash
-# Register
+bash# Register
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"email":"user@test.com","password":"test123","username":"testuser"}'
+  -d '{"name":"Jane Doe","email":"jane@example.com","password":"securepassword"}'
 
 # Login
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"user@test.com","password":"test123"}'
+  -d '{"email":"jane@example.com","password":"securepassword"}'
 
-# Get all books
+# Get all books (no auth needed)
 curl http://localhost:5000/api/books
 
-# Create book (replace TOKEN with actual JWT)
+# Create a book (replace TOKEN with the JWT from login)
 curl -X POST http://localhost:5000/api/books \
   -H "Authorization: Bearer TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"title":"Book Name","author":"Author","price":20,"isbn":"123","publishedDate":"2026-06-21"}'
-```
+  -d '{"title":"The Alchemist","author":"Paulo Coelho","price":15,"isbn":"9780062315007","publishedDate":"1988-05-01"}'
 
----
+Security Notes
 
-## 🎯 Submission Checklist
 
-- ✅ All 5 API endpoints working
-- ✅ MongoDB integration with Mongoose
-- ✅ User authentication with JWT
-- ✅ Error handling
-- ✅ Project structure organized
-- ✅ .env for configuration
-- ✅ README with documentation
-- ✅ Deployed (optional)
-
----
-
-## 📅 Deadline: 30th June, 2026
-
----
-
-## 🤝 Contributing
-
-Feel free to fork and submit pull requests for improvements.
-
-## 📄 License
-
-ISC License
-
----
-
-## 📧 Contact & Support
-
-For issues or questions, create a GitHub issue or contact the project maintainer.
-
----
-
-**Happy Coding! 🚀**
+Passwords are hashed with bcrypt before being stored — plaintext passwords are never saved.
+Write operations on books (create/update/delete) require a valid JWT.
+.env is excluded from version control via .gitignore — never commit real secrets. The JWT_SECRET shown in this README is a placeholder; use a long, random value in your own .env.
